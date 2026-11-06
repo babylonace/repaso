@@ -8,6 +8,8 @@ http.createServer((req, res) => {
   try { p = path.resolve(root, "." + decodeURIComponent(req.url.split("?")[0])); } catch { res.writeHead(400); return res.end("Bad request"); }
   if (p !== root && !p.startsWith(root + path.sep)) { res.writeHead(403); return res.end("Forbidden"); }
   if (req.url.split("?")[0].endsWith("/") || p === root) p = path.join(p, "index.html");
+  // Check again on the final path, right before reading it.
+  if (!p.startsWith(root + path.sep)) { res.writeHead(403); return res.end("Forbidden"); }
   fs.readFile(p, (err, data) => {
     if (err) { res.writeHead(404); return res.end("Not found"); }
     res.writeHead(200, { "Content-Type": types[path.extname(p)] || "application/octet-stream" });
