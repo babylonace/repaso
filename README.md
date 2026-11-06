@@ -131,6 +131,8 @@ npm run e2e:accounts   # sign-up, sign-out and security rules, on the Firebase e
 npm run media          # redraws the GIF, screenshots and share image (also needs ffmpeg)
 ```
 
+How changes are checked and merged: [docs/how-this-repo-is-developed.md](docs/how-this-repo-is-developed.md).
+
 ## License
 
 Code: [MIT](LICENSE). Questions and glossary: [CC BY 4.0](content/LICENSE.md). Fonts: SIL Open Font License, included next to the font files.

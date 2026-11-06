@@ -133,6 +133,8 @@ npm run e2e:accounts   # registro, cierre de sesión y reglas de seguridad, en l
 npm run media          # redibuja el GIF, las capturas y la imagen para compartir (también necesita ffmpeg)
 ```
 
+Cómo se comprueba y se fusiona cada cambio (en inglés): [docs/how-this-repo-is-developed.md](docs/how-this-repo-is-developed.md).
+
 ## Licencia
 
 Código: [MIT](LICENSE). Preguntas y glosario: [CC BY 4.0](content/LICENSE.md). Fuentes: SIL Open Font License, incluida junto a los archivos de las fuentes.
