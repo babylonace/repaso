@@ -96,8 +96,7 @@ export const PAGES = {
 <p>Each topic has four levels: Foundations, Basic, Intermediate and Advanced. New questions start with what interviewers ask, and Foundations come last. To build up instead, pick From the basics in Practice: each topic starts at Foundations and 70% right opens the next level.</p>
 <h2>Keyboard</h2>
 <p>Press 1 to 4 to answer, Enter to continue and / to search.</p>
-<h2>Who made this</h2>
-<p>Adriana built Repaso. If you spot a mistake, <a href="#/suggest">tell me</a>.</p>`,
+<p>If you spot a mistake, <a href="#/suggest">tell me</a>.</p>`,
     privacy: `<h1>Privacy</h1>
 <p>Short version: you can use all of Repaso without giving any data. There are no ads, no trackers and no analytics.</p>
 <h2>Without an account</h2>
@@ -122,8 +121,7 @@ export const PAGES = {
 <p>Cada tema tiene cuatro niveles: Fundamentos, Básico, Intermedio y Avanzado. Las preguntas nuevas empiezan por lo que preguntan en entrevista, y los Fundamentos salen al final. Si prefieres ir subiendo, elige Desde lo básico en Practicar: cada tema empieza en Fundamentos y con el 70% de aciertos se abre el siguiente nivel.</p>
 <h2>Teclado</h2>
 <p>Pulsa 1 a 4 para responder, Enter para continuar y / para buscar.</p>
-<h2>Quién lo hizo</h2>
-<p>Adriana creó Repaso. Si ves algún error, <a href="#/suggest">avísame</a>.</p>`,
+<p>Si ves algún error, <a href="#/suggest">avísame</a>.</p>`,
     privacy: `<h1>Privacidad</h1>
 <p>En resumen: puedes usar todo Repaso sin dar ningún dato. No hay anuncios, ni rastreadores, ni analítica.</p>
 <h2>Sin cuenta</h2>
