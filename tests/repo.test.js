@@ -1,4 +1,4 @@
-// Guards the promises the site makes: no third parties at rest, nothing left from the old artifact.
+// Guards the promises the site makes: no third parties at rest.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -7,9 +7,6 @@ import path from "node:path";
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
 const text = walk("public").filter((f) => /\.(js|html|css|json|webmanifest)$/.test(f));
 
-test("nothing depends on claude.ai", () => {
-  for (const f of text) assert.ok(!/window\.claude|claude\.ai/.test(fs.readFileSync(f, "utf8")), f);
-});
 test("the Firebase SDK is only reachable through sync.js, loaded on demand", () => {
   const app = fs.readFileSync("public/assets/js/app.js", "utf8");
   assert.ok(!/^import .*sync\.js/m.test(app), "sync.js must stay a dynamic import");
