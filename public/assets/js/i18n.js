@@ -97,7 +97,7 @@ export const PAGES = {
 <h2>Keyboard</h2>
 <p>Press 1 to 4 to answer, Enter to continue and / to search.</p>
 <h2>Who made this</h2>
-<p>Adriana built Repaso. The questions and the Spanish translation are AI-assisted, so mistakes can slip through. If you spot one, <a href="#/suggest">tell me</a>.</p>`,
+<p>Adriana built Repaso. If you spot a mistake, <a href="#/suggest">tell me</a>.</p>`,
     privacy: `<h1>Privacy</h1>
 <p>Short version: you can use all of Repaso without giving any data. There are no ads, no trackers and no analytics.</p>
 <h2>Without an account</h2>
@@ -123,7 +123,7 @@ export const PAGES = {
 <h2>Teclado</h2>
 <p>Pulsa 1 a 4 para responder, Enter para continuar y / para buscar.</p>
 <h2>Quién lo hizo</h2>
-<p>Adriana creó Repaso. Las preguntas y la traducción al español son AI-assisted, así que se puede colar algún error. Si ves uno, <a href="#/suggest">avísame</a>.</p>`,
+<p>Adriana creó Repaso. Si ves algún error, <a href="#/suggest">avísame</a>.</p>`,
     privacy: `<h1>Privacidad</h1>
 <p>En resumen: puedes usar todo Repaso sin dar ningún dato. No hay anuncios, ni rastreadores, ni analítica.</p>
 <h2>Sin cuenta</h2>
