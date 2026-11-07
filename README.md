@@ -7,7 +7,7 @@
 **Practice for your software interview.**<br>
 897 questions in English and Spanish. No signup, no ads, no trackers.
 
-[![Try it](https://img.shields.io/badge/try%20it-babylonace.github.io%2Frepaso-5b45ee?style=for-the-badge)](https://babylonace.github.io/repaso/)
+[![Try it](https://img.shields.io/badge/try%20it-repaso.babylonace.dev-5b45ee?style=for-the-badge)](https://repaso.babylonace.dev/)
 
 [![Test and deploy](https://github.com/babylonace/repaso/actions/workflows/deploy.yml/badge.svg)](https://github.com/babylonace/repaso/actions/workflows/deploy.yml)
 [![Code: MIT](https://img.shields.io/badge/code-MIT-blue)](LICENSE)

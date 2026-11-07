@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { esc, inline, richText, highlight } from "../public/assets/js/core.js";
 
-export const SITE = (process.env.SITE_URL || "https://babylonace.github.io/repaso/").replace(/\/?$/, "/");
+export const SITE = (process.env.SITE_URL || "https://repaso.babylonace.dev/").replace(/\/?$/, "/");
 
 const T = {
   en: {

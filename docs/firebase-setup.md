@@ -17,11 +17,11 @@ The site works without any of this. Accounts only add sync between devices and a
 **GitHub:**
 
 1. On GitHub: Settings > Developer settings > OAuth Apps > New OAuth App.
-2. Homepage URL: `https://babylonace.github.io/repaso/`
+2. Homepage URL: `https://repaso.babylonace.dev/`
 3. Authorization callback URL: copy it from the GitHub provider panel in Firebase (it looks like `https://<project>.firebaseapp.com/__/auth/handler`).
 4. Paste the client ID and client secret back into Firebase. The secret stays in Firebase and never goes in this repo.
 
-**Authorized domains** (Authentication > Settings): add `babylonace.github.io`.
+**Authorized domains** (Authentication > Settings): add `repaso.babylonace.dev`.
 
 Leave e-mail link sign-in off: Spark allows 5 of those e-mails a day.
 

@@ -7,7 +7,7 @@
 **Practica para tu entrevista de software.**<br>
 897 preguntas en español y en inglés. Sin registro, sin anuncios, sin rastreadores.
 
-[![Probarlo](https://img.shields.io/badge/probarlo-babylonace.github.io%2Frepaso-5b45ee?style=for-the-badge)](https://babylonace.github.io/repaso/)
+[![Probarlo](https://img.shields.io/badge/probarlo-repaso.babylonace.dev-5b45ee?style=for-the-badge)](https://repaso.babylonace.dev/)
 
 [![Test and deploy](https://github.com/babylonace/repaso/actions/workflows/deploy.yml/badge.svg)](https://github.com/babylonace/repaso/actions/workflows/deploy.yml)
 [![Código: MIT](https://img.shields.io/badge/c%C3%B3digo-MIT-blue)](LICENSE)

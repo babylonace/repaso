@@ -36,7 +36,7 @@ Firebase details: [Auth limits](https://firebase.google.com/docs/auth/limits) al
 | Vercel Hobby | | Non-commercial only | No |
 | Netlify | | Sources disagree on the free limits | No |
 
-**Domain:** `babylonace.github.io/repaso/`. Planned: `repaso.babylonace.dev` (a subdomain of a domain bought at GoDaddy, so one CNAME record plus an authorized domain in Firebase). Steps in [domain-migration.md](domain-migration.md); until they are done the github.io address stays canonical.
+**Domain:** `repaso.babylonace.dev`, a subdomain served by GitHub Pages. `babylonace.github.io/repaso/` redirects to it.
 
 ## D. Translation
 
@@ -81,7 +81,7 @@ Sign-up, sign-out, sign-in again, a second device, deletion and the security rul
 
 ## Known limits of this design
 
-- **One origin for everything on `babylonace.github.io`.** Progress, the sign-in token and the offline copy belong to the origin, not to the `/repaso/` folder. Any script on another site under the same user could read them, so don't publish other sites there that load third-party scripts. Today there are none. A custom domain or a dedicated GitHub organisation would give Repaso its own origin.
+- **One origin, shared with nothing else.** Progress, the sign-in token and the offline copy belong to `repaso.babylonace.dev`. On the custom domain no other site shares that origin, so anything published under `babylonace.github.io` cannot read them.
 - **No response headers on GitHub Pages.** The Content-Security-Policy is a `<meta>` tag, which can't set `frame-ancestors`, and `_headers` is ignored. A small script hides the page if it is framed. On Cloudflare Pages (plan B) `_headers` does apply.
 - **The Firebase SDK comes from Google's CDN** and can't carry an integrity hash when loaded as a module. The version is pinned, it loads only when someone signs in or is already signed in, and the CSP allows only that path. Bundling it into the repo would remove this risk at the cost of a build dependency.
 
