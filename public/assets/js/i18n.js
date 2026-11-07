@@ -96,7 +96,7 @@ export const PAGES = {
 <p>Each topic has four levels: Foundations, Basic, Intermediate and Advanced. New questions start with what interviewers ask, and Foundations come last. To build up instead, pick From the basics in Practice: each topic starts at Foundations and 70% right opens the next level.</p>
 <h2>Keyboard</h2>
 <p>Press 1 to 4 to answer, Enter to continue and / to search.</p>
-<p>If you spot a mistake, <a href="#/suggest">tell me</a>.</p>`,
+<p>If you spot a mistake, <a href="#/suggest">let me know</a>.</p>`,
     privacy: `<h1>Privacy</h1>
 <p>Short version: you can use all of Repaso without giving any data. There are no ads, no trackers and no analytics.</p>
 <h2>Without an account</h2>
