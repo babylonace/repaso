@@ -78,7 +78,7 @@ ${alts}
 <header class="top">
   <a class="brand" href="${appLink(lang, up)}" aria-label="Repaso"><img src="${up}icon.svg" alt="" width="32" height="32"><span>Repaso</span></a>
   <nav class="nav" aria-label="Main"><a href="${up}${lang === "es" ? "es/" : ""}t/">${t.browse}</a><a href="${up}${lang === "es" ? "es/" : ""}glossary/">${t.glossary}</a></nav>
-  <div class="tools"><a class="tool lang" href="${lang === "es" && alternates.en === SITE ? `${SITE}?lang=en` : alternates[lang === "en" ? "es" : "en"]}" hreflang="${lang === "en" ? "es" : "en"}">${t.other}</a></div>
+  <div class="tools"><a class="tool lang" href="${alternates[lang === "en" ? "es" : "en"]}" hreflang="${lang === "en" ? "es" : "en"}">${t.other}</a></div>
 </header>
 <main id="main">${body}</main>
 <footer class="foot"><a href="${appLink(lang, up, "#/about")}">${t.about}</a><a href="${appLink(lang, up, "#/privacy")}">${t.privacy}</a><a href="https://github.com/babylonace/repaso" rel="noopener">GitHub</a></footer>
@@ -161,10 +161,24 @@ export function homeBlock(content, lang, up = "") {
 <p><a href="${up}${p}t/">${t.browse}</a> · <a href="${up}${p}glossary/">${t.glossary}</a> · ${other}</p></div>`;
 }
 
-/** The Spanish home page, at /es/. The English one is public/index.html. */
-export function homePageEs(content) {
-  const t = T.es, rel = "";
-  return { path: "es/index.html", rel, html: page({ lang: "es", depth: 1, title: t.homeTitle, description: t.homeDesc(content.questions.length), canonical: `${SITE}es/`, alternates: { en: SITE, es: `${SITE}es/` }, body: homeBlock(content, "es", "../") }) };
+/** The Spanish home page, at /es/. It is the same app as the English home (public/index.html), opened in Spanish,
+ * with the Spanish text inside for search engines and people without script until the app starts. */
+export function homePageEs(content, shell = fs.readFileSync("public/index.html", "utf8")) {
+  const t = T.es, n = content.questions.length;
+  const swap = (s, from, to) => { if (!from.test(s)) throw new Error(`homePageEs: ${from} not in public/index.html`); return s.replace(from, to); };
+  let html = shell;
+  html = swap(html, /<html lang="en">/, '<html lang="es">');
+  html = swap(html, /<title>[^<]*<\/title>/, `<title>${esc(t.homeTitle)}</title>`);
+  html = swap(html, /<meta name="description" content="[^"]*">/, `<meta name="description" content="${esc(t.homeDesc(n))}">`);
+  html = swap(html, /<link rel="canonical" href="__SITE__">/, '<link rel="canonical" href="__SITE__es/">');
+  html = swap(html, /<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${esc(t.homeTitle)}">`);
+  html = swap(html, /<meta property="og:description" content="[^"]*">/, `<meta property="og:description" content="${esc(t.homeDesc(n))}">`);
+  html = swap(html, /<meta property="og:url" content="__SITE__">/, '<meta property="og:url" content="__SITE__es/">');
+  html = swap(html, /<noscript><p>[^<]*<\/p><\/noscript>/, "<noscript><p>Repaso necesita JavaScript para las sesiones de práctica.</p></noscript>");
+  // One folder down: every relative file the shell loads moves up one level. Hash links (#/...) stay on this page.
+  html = html.replace(/ (href|src)="(?!https?:|#|\.\.\/|__SITE__)([^"]+)"/g, ' $1="../$2"');
+  html = html.replaceAll("__HOME__", homeBlock(content, "es", "../")).replaceAll("__COUNT__", String(n)).replaceAll("__SITE__", SITE);
+  return { path: "es/index.html", rel: "", html };
 }
 
 /** Writes every page and the sitemap into dist/. Returns the number of pages. */

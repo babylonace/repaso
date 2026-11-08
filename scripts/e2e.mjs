@@ -204,19 +204,42 @@ await check("first visit follows the browser language, and a saved choice wins",
     await ctx.close();
   }
 });
-await check("from the Spanish home the app opens in Spanish, even with the browser in English, and it sticks", async () => {
+await check("the Spanish home is the app in Spanish, even with the browser in English, stays on /es/ and works offline", async () => {
   const ctx = await browser.newContext({ locale: "en-US" });
   const p = await ctx.newPage();
+  const errors = [];
+  p.on("pageerror", (e) => errors.push(e.message));
+  p.on("console", (m) => { if (m.type() === "error") errors.push(m.text()); });
   await p.goto(`${URL_}es/`);
+  await p.locator(".opt").first().waitFor();
+  ok((await p.evaluate(() => document.documentElement.lang)) === "es", "the app should be in Spanish");
+  await p.locator("[data-nav=practice]").click();
+  await p.waitForFunction(() => location.hash === "#/practice");
+  ok(new URL(p.url()).pathname === "/es/", `the app's links should stay on /es/, got ${p.url()}`);
+  ok((await p.locator("#foot-browse").getAttribute("href")).endsWith("/es/t/"), "All topics points at the Spanish topics");
+  await p.goto(`${URL_}es/`);
+  await p.evaluate(() => navigator.serviceWorker.ready);
+  await p.reload();
+  await p.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await p.waitForTimeout(400);
+  await ctx.setOffline(true);
+  await p.reload();
+  await p.locator(".opt").first().waitFor({ timeout: 5000 });
+  await ctx.setOffline(false);
+  ok(!errors.length, errors[0]);
+  await ctx.close();
+});
+await check("a link from a Spanish page opens the app in Spanish, even after choosing English", async () => {
+  const ctx = await browser.newContext({ locale: "en-US" });
+  const p = await ctx.newPage();
+  await p.goto(`${URL_}?lang=en`);
+  await p.locator(".opt").first().waitFor();
+  await p.goto(`${URL_}es/q/db-07/`);
   await p.locator("a.btn.pri").click();
-  await p.waitForFunction(() => document.documentElement.lang === "es" && location.hash === "#/practice");
+  await p.waitForFunction(() => document.documentElement.lang === "es" && location.hash === "#/q/DB-07");
   ok(!p.url().includes("lang="), `the address should not keep ?lang, got ${p.url()}`);
   await p.reload();
   await p.waitForFunction(() => document.documentElement.lang === "es" && !!document.querySelector("#lang"));
-  await p.goto(`${URL_}es/`);
-  await p.locator("a.tool.lang").click();
-  await p.locator(".opt").first().waitFor();
-  ok((await p.evaluate(() => document.documentElement.lang)) === "en", "the English link on the Spanish home opens English");
   await ctx.close();
 });
 const levelOnScreen = (p) => p.locator(".qmeta span").first().innerText();
