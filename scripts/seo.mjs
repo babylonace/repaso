@@ -15,6 +15,10 @@ const T = {
     glossaryTitle: "Software engineering glossary", glossaryDesc: (n) => `${n} short definitions of terms that come up in software engineering interviews.`,
     topicsTitle: "Software interview questions by topic", topicsDesc: (n, q) => `${q} free practice questions in ${n} topics, in English and Spanish.`,
     about: "How it works", privacy: "Privacy", other: "Español", free: "Free, no signup, in English and Spanish.", qs: "questions",
+    homeTitle: "Repaso: practice software interview questions", homeH1: "Practice for your software interview.",
+    homeDesc: (q) => `Free practice for software engineering interviews: ${q} questions in English and Spanish, with spaced repetition. No signup.`,
+    homeLead: (q, n) => `${q} interview questions with answers across ${n} topics, from junior to mid level. Practice what interviewers ask, understand every answer and come back to what you missed. Free, no signup, in English and Spanish.`,
+    start: "Start practicing", topics: "Interview questions by topic",
   },
   es: {
     lang: "es", home: "Repaso", browse: "Todos los temas", glossary: "Glosario", practice: "Practica esta pregunta en Repaso", open: "Practicar este tema",
@@ -23,6 +27,10 @@ const T = {
     glossaryTitle: "Glosario de ingeniería de software", glossaryDesc: (n) => `${n} definiciones cortas de términos que salen en entrevistas de ingeniería de software.`,
     topicsTitle: "Preguntas de entrevista de software por tema", topicsDesc: (n, q) => `${q} preguntas de práctica gratis en ${n} temas, en español e inglés.`,
     about: "Cómo funciona", privacy: "Privacidad", other: "English", free: "Gratis, sin registro, en español e inglés.", qs: "preguntas",
+    homeTitle: "Repaso: preguntas de entrevista de software para practicar", homeH1: "Practica para tu entrevista de software.",
+    homeDesc: (q) => `Practica gratis para entrevistas de ingeniería de software: ${q} preguntas en español e inglés, con repetición espaciada. Sin registro.`,
+    homeLead: (q, n) => `${q} preguntas de entrevista con respuestas en ${n} temas, de nivel junior a intermedio. Practica lo que preguntan, entiende cada respuesta y vuelve a lo que fallaste. Gratis, sin registro, en español e inglés.`,
+    start: "Empezar a practicar", topics: "Preguntas de entrevista por tema",
   },
 };
 
@@ -138,25 +146,44 @@ export function glossaryPage(content, lang) {
   return { path: `${prefix(lang)}${rel}index.html`, rel, html: page({ lang, depth, title: `${t.glossaryTitle} | Repaso`, description: t.glossaryDesc(items.length), canonical: urlOf(lang, rel), alternates: both(rel), body: b }) };
 }
 
+/** The text of the home page as plain HTML with real links. The app replaces it once it starts; crawlers and people without script read it as it is. */
+export function homeBlock(content, lang, up = "") {
+  const t = T[lang], p = prefix(lang), n = content.questions.length;
+  const row = (x) => `<li><a href="${up}${p}t/${x.k}/"><b>${esc(lang === "es" ? x.name_es : x.name)}</b><small>${content.questions.filter((q) => q.cat === x.k).length} ${t.qs}</small></a></li>`;
+  const groups = content.groups.map((g) => `<h3>${esc(lang === "es" ? g.name_es : g.name)}</h3><ul class="results">${content.topics.filter((x) => x.g === g.k).map(row).join("")}</ul>`).join("");
+  const other = lang === "en" ? `<a href="${up}es/" hreflang="es" lang="es">${T.en.other}</a>` : `<a href="${up}" hreflang="en" lang="en">${T.es.other}</a>`;
+  return `<div class="stack" id="boot"><h1>${t.homeH1}</h1><p class="lead">${t.homeLead(n, content.topics.length)}</p>
+<p><a class="btn pri" href="${up}#/practice">${t.start}</a></p>
+<h2>${t.topics}</h2>${groups}
+<p><a href="${up}${p}t/">${t.browse}</a> · <a href="${up}${p}glossary/">${t.glossary}</a> · ${other}</p></div>`;
+}
+
+/** The Spanish home page, at /es/. The English one is public/index.html. */
+export function homePageEs(content) {
+  const t = T.es, rel = "";
+  return { path: "es/index.html", rel, html: page({ lang: "es", depth: 1, title: t.homeTitle, description: t.homeDesc(content.questions.length), canonical: `${SITE}es/`, alternates: { en: SITE, es: `${SITE}es/` }, body: homeBlock(content, "es", "../") }) };
+}
+
 /** Writes every page and the sitemap into dist/. Returns the number of pages. */
 export function writeSeo(content, dist = "dist") {
-  const pages = [];
+  const pages = [], home = homePageEs(content);
   for (const lang of ["en", "es"]) {
     pages.push(topicsIndex(content, lang), glossaryPage(content, lang));
     for (const tp of content.topics) pages.push(topicPage(tp, content, lang));
     for (const q of content.questions) pages.push(questionPage(q, content, lang));
   }
-  for (const p of pages) {
+  for (const p of [...pages, home]) {
     const file = path.join(dist, p.path);
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, p.html);
   }
-  const urls = [`<url><loc>${SITE}</loc></url>`];
+  const hl = (en, es) => `<xhtml:link rel="alternate" hreflang="en" href="${en}"/><xhtml:link rel="alternate" hreflang="es" href="${es}"/>`;
+  const urls = [`<url><loc>${SITE}</loc>${hl(SITE, `${SITE}es/`)}</url>`, `<url><loc>${SITE}es/</loc>${hl(SITE, `${SITE}es/`)}</url>`];
   for (const p of pages) {
     const alt = both(p.rel);
     urls.push(`<url><loc>${alt[p.path.startsWith("es/") ? "es" : "en"]}</loc><xhtml:link rel="alternate" hreflang="en" href="${alt.en}"/><xhtml:link rel="alternate" hreflang="es" href="${alt.es}"/></url>`);
   }
   fs.writeFileSync(path.join(dist, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join("\n")}\n</urlset>\n`);
   fs.writeFileSync(path.join(dist, "robots.txt"), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}sitemap.xml\n`);
-  return pages.length;
+  return pages.length + 1;
 }

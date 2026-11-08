@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { loadContent } from "../scripts/content.mjs";
-import { questionPage, topicPage, glossaryPage, topicsIndex, view, SITE } from "../scripts/seo.mjs";
+import { questionPage, topicPage, glossaryPage, topicsIndex, homeBlock, homePageEs, view, SITE } from "../scripts/seo.mjs";
 
 const c = loadContent();
 
@@ -31,4 +31,15 @@ test("topic, topics index and glossary pages list everything", () => {
 test("static pages load no script except the theme file", () => {
   const html = questionPage(c.questions[0], c, "en").html;
   assert.deepEqual([...html.matchAll(/<script[^>]*>/g)].map((m) => m[0]), ['<script src="../../assets/js/theme.js">']);
+});
+test("the home pages hold real text and links, in both languages, and point at each other", () => {
+  for (const lang of ["en", "es"]) {
+    const html = homeBlock(c, lang, lang === "es" ? "../" : "");
+    assert.ok(/<h1>.+<\/h1>/.test(html), lang);
+    for (const t of c.topics) assert.ok(html.includes(`t/${t.k}/`), `${lang} ${t.k}`);
+  }
+  const es = homePageEs(c).html;
+  assert.ok(es.includes(`<link rel="canonical" href="${SITE}es/">`));
+  assert.ok(es.includes(`hreflang="en" href="${SITE}"`) && es.includes(`hreflang="es" href="${SITE}es/"`));
+  assert.ok(es.includes("<html lang=\"es\">"));
 });
