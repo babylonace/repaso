@@ -44,6 +44,17 @@ test("the home pages hold real text and links, in both languages, and point at e
   assert.ok(es.includes("<html lang=\"es\">"));
 });
 
+test("the Spanish home is the app, one folder down, with the Spanish text for search engines inside", () => {
+  const es = homePageEs(c).html;
+  assert.ok(es.includes('<script type="module" src="../assets/js/app.js"></script>'), "it runs the app");
+  assert.ok(es.includes('href="../assets/css/app.css"') && es.includes('href="../data/bank.en.json"') && es.includes('href="../manifest.webmanifest"'), "files load from one level up");
+  assert.ok(!/ (href|src)="(assets|data|icon|manifest|apple-touch)/.test(es), "no file path was left pointing inside /es/");
+  assert.ok(es.includes('href="#/practice"'), "the app's own links stay on /es/");
+  assert.ok(es.includes(`<h1>${"Practica para tu entrevista de software."}</h1>`), "the Spanish text is there for search engines");
+  assert.ok(es.includes(`<meta property="og:url" content="${SITE}es/">`) && es.includes("<title>Repaso: preguntas de entrevista de software para practicar</title>"), "Spanish title and address");
+  assert.ok(!/__[A-Z]+__/.test(es), "no placeholder left");
+});
+
 test('links into the app from a Spanish page carry ?lang=es, English pages do not', () => {
   const q = c.questions[0], topic = c.topics[0];
   const esQ = questionPage(q, c, 'es').html, enQ = questionPage(q, c, 'en').html;
@@ -53,9 +64,7 @@ test('links into the app from a Spanish page carry ?lang=es, English pages do no
   assert.ok(!topicPage(topic, c, 'en').html.includes('?lang=es'), 'English topic page');
   const es = homePageEs(c).html;
   assert.ok(es.includes('?lang=es#/practice'), 'Spanish home start button');
-  assert.ok(es.includes('?lang=es#/about') && es.includes('?lang=es#/privacy'), 'Spanish footer links');
-  assert.ok(es.includes('class="tool lang" href="' + SITE + '?lang=en"'), 'the English button in the header of the Spanish home picks English');
-  assert.ok(es.includes('href="../?lang=en" hreflang="en"'), 'the English link at the bottom of the Spanish home picks English');
+  assert.ok(es.includes('href="../?lang=en" hreflang="en"'), 'the English link in the Spanish home text picks English');
   assert.ok(!questionPage(c.questions[0], c, "es").html.includes('?lang=en'), 'a Spanish question page links to its English twin, not to the app');
   assert.ok(!homeBlock(c, 'en', '').includes('?lang=es'), 'English home');
 });

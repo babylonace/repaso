@@ -35,9 +35,14 @@ function detectLang() {
   }
   return "en";
 }
-/** A link from a static page carries ?lang=es or ?lang=en: the page you came from picks the language. It is remembered, and removed from the address so a reload doesn't repeat it. */
+/** The site root, worked out from this file, so the app runs the same at / and at /es/. */
+const ROOT = new URL("../../", import.meta.url);
+const at = (p) => new URL(p, ROOT).href;
+
+/** The Spanish home (/es/) opens in Spanish. A link from a static page carries ?lang=es or ?lang=en: the page you came from picks the language. It is remembered, and the ?lang is removed from the address so a reload doesn't repeat it. */
 function langFromLink() {
   try {
+    if (/\/es\/(index\.html)?$/.test(location.pathname)) return "es";
     const l = new URLSearchParams(location.search).get("lang");
     if (l !== "es" && l !== "en") return null;
     history.replaceState(null, "", location.pathname + location.hash);
@@ -257,7 +262,7 @@ function runSearch(query, limit) {
 }
 function loadEs() {
   if (ES) return Promise.resolve(ES);
-  esLoading ||= fetch("data/bank.es.json").then((r) => { if (!r.ok) throw 0; return r.json(); })
+  esLoading ||= fetch(at("data/bank.es.json")).then((r) => { if (!r.ok) throw 0; return r.json(); })
     .then((j) => { ES = { q: bare(j.q), gl: bare(j.gl) }; DOCS = null; return j; })
     .catch((e) => { esLoading = null; throw e; });
   return esLoading;
@@ -634,7 +639,7 @@ function paintChrome() {
   $("acct").setAttribute("aria-label", t("aria.account"));
   document.querySelector(".brand").setAttribute("aria-label", t("aria.home"));
   document.querySelector(".skip").textContent = t("skip");
-  $("foot-browse").setAttribute("href", ui.lang === "es" ? "es/t/" : "t/");
+  $("foot-browse").setAttribute("href", at(ui.lang === "es" ? "es/t/" : "t/"));
 }
 let wantSearch = false;
 window.addEventListener("hashchange", () => {
@@ -828,7 +833,7 @@ async function boot() {
   if (CONFIG.linkedin) { const l = $("foot-li"); l.href = CONFIG.linkedin; l.hidden = false; }
   paintChrome();
   try {
-    const r = await fetch("data/bank.en.json");
+    const r = await fetch(at("data/bank.en.json"));
     if (!r.ok) throw new Error(r.status);
     const d = await r.json();
     GROUPS = d.groups; GROUPS.forEach((g) => { GROUP[g.k] = g; });
@@ -848,6 +853,6 @@ async function boot() {
   paintChrome();
   render();
   if (CONFIG.firebase && lsGet(KEYS.signed)) connect().catch(() => { acct.status = "error"; });
-  if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register("sw.js").catch(() => {});
+  if ("serviceWorker" in navigator && window.isSecureContext) navigator.serviceWorker.register(at("sw.js")).catch(() => {});
 }
 boot();

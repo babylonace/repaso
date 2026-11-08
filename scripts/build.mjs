@@ -34,11 +34,12 @@ for (const f of files) hash.update(fs.readFileSync(f));
 const version = hash.digest("hex").slice(0, 10);
 // The offline copy holds the app only. The static pages for search engines are not precached.
 const rel = (f) => path.relative("dist", f).replaceAll("\\", "/");
-const list = files.map(rel).filter((f) => !/^(sw\.js|_headers|robots\.txt|sitemap\.xml|og\.png)$/.test(f) && !/^(es\/)?(q|t|glossary)\//.test(f) && f !== "es/index.html");
+// The Spanish home is the app too, so it goes in as "es/", the address people open.
+const list = files.map(rel).filter((f) => !/^(sw\.js|_headers|robots\.txt|sitemap\.xml|og\.png)$/.test(f) && !/^(es\/)?(q|t|glossary)\//.test(f)).map((f) => (f === "es/index.html" ? "es/" : f));
 const sw = fs.readFileSync("dist/sw.js", "utf8").replace("__VERSION__", version).replace('"__FILES__"', JSON.stringify(list).slice(1, -1));
 fs.writeFileSync("dist/sw.js", sw);
 // A last look: nothing half-stamped, and everything the offline copy lists really exists.
-for (const f of ["dist/sw.js", "dist/index.html"]) if (/__[A-Z]+__/.test(fs.readFileSync(f, "utf8"))) throw new Error(`${f} still has a placeholder`);
+for (const f of ["dist/sw.js", "dist/index.html", "dist/es/index.html"]) if (/__[A-Z]+__/.test(fs.readFileSync(f, "utf8"))) throw new Error(`${f} still has a placeholder`);
 for (const f of list) if (!fs.existsSync(path.join("dist", f))) throw new Error(`sw.js lists ${f}, which is not in dist`);
 
 const kb = (f) => Math.round(fs.statSync(f).size / 1024);
