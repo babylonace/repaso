@@ -46,6 +46,9 @@ export function view(q, es) {
   return { q: e.q ?? q.q, o: e.o ?? q.o, ans: q.t === "m" ? (e.fa ?? e.o?.[q.a] ?? q.fa ?? q.o[q.a]) : (e.a ?? q.a), e: e.e ?? q.e, r: e.r ?? q.r };
 }
 
+/** A link into the app. From a Spanish page it carries ?lang=es: the page you came from picks the language, so someone whose browser is in English still lands in Spanish. */
+const appLink = (lang, up, hash = "") => `${up}${lang === "es" ? "?lang=es" : ""}${hash}`;
+
 function page({ lang, depth, title, description, canonical, alternates, body }) {
   const up = "../".repeat(depth), t = T[lang];
   const alts = Object.entries(alternates).map(([l, u]) => `<link rel="alternate" hreflang="${l}" href="${u}">`).join("\n");
@@ -73,12 +76,12 @@ ${alts}
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="${up}" aria-label="Repaso"><img src="${up}icon.svg" alt="" width="32" height="32"><span>Repaso</span></a>
+  <a class="brand" href="${appLink(lang, up)}" aria-label="Repaso"><img src="${up}icon.svg" alt="" width="32" height="32"><span>Repaso</span></a>
   <nav class="nav" aria-label="Main"><a href="${up}${lang === "es" ? "es/" : ""}t/">${t.browse}</a><a href="${up}${lang === "es" ? "es/" : ""}glossary/">${t.glossary}</a></nav>
-  <div class="tools"><a class="tool lang" href="${alternates[lang === "en" ? "es" : "en"]}" hreflang="${lang === "en" ? "es" : "en"}">${t.other}</a></div>
+  <div class="tools"><a class="tool lang" href="${lang === "es" && alternates.en === SITE ? `${SITE}?lang=en` : alternates[lang === "en" ? "es" : "en"]}" hreflang="${lang === "en" ? "es" : "en"}">${t.other}</a></div>
 </header>
 <main id="main">${body}</main>
-<footer class="foot"><a href="${up}#/about">${t.about}</a><a href="${up}#/privacy">${t.privacy}</a><a href="https://github.com/babylonace/repaso" rel="noopener">GitHub</a></footer>
+<footer class="foot"><a href="${appLink(lang, up, "#/about")}">${t.about}</a><a href="${appLink(lang, up, "#/privacy")}">${t.privacy}</a><a href="https://github.com/babylonace/repaso" rel="noopener">GitHub</a></footer>
 </body>
 </html>
 `;
@@ -103,7 +106,7 @@ export function questionPage(q, content, lang) {
     const g = content.glossary[k], e = lang === "es" ? content.esGl[k] : null;
     return `<li><a href="${"../".repeat(depth)}${prefix(lang)}glossary/#${k}">${esc(e?.[0] || g[0])}</a></li>`;
   }).join("")}</ul></section>`;
-  b += `<p><a class="btn pri" href="${"../".repeat(depth)}#/q/${esc(q.id)}">${t.practice}</a></p></article>`;
+  b += `<p><a class="btn pri" href="${appLink(lang, "../".repeat(depth), `#/q/${esc(q.id)}`)}">${t.practice}</a></p></article>`;
   return {
     path: `${prefix(lang)}${rel}index.html`, rel,
     html: page({ lang, depth, title: `${q.c ? `${clip(v.q, 36)}: ${clip((q.c.split("\n").find((l) => l.trim()) || "").trim(), 34)}` : clip(v.q, 70)} | Repaso`, description: clip(v.r ? `${v.q} ${v.r}` : `${v.q} ${v.ans}`, 155), canonical: urlOf(lang, rel), alternates: both(rel), body: b }),
@@ -114,7 +117,7 @@ export function topicPage(topic, content, lang) {
   const t = T[lang], es = { q: content.esQ, gl: content.esGl };
   const name = lang === "es" ? topic.name_es : topic.name, rel = `t/${topic.k}/`, depth = lang === "es" ? 3 : 2;
   const qs = content.questions.filter((q) => q.cat === topic.k);
-  let b = `<div class="stack"><h1>${t.topicTitle(esc(name))}</h1><p>${t.intro(qs.length, esc(name))}</p><p><a class="btn pri" href="${"../".repeat(depth)}#/study/${topic.k}">${t.open}</a></p>`;
+  let b = `<div class="stack"><h1>${t.topicTitle(esc(name))}</h1><p>${t.intro(qs.length, esc(name))}</p><p><a class="btn pri" href="${appLink(lang, "../".repeat(depth), `#/study/${topic.k}`)}">${t.open}</a></p>`;
   for (let l = 0; l < 4; l++) {
     const list = qs.filter((q) => q.l === l);
     if (list.length) b += `<section class="section"><h2>${t.level[l]}</h2><ul class="results">${list.map((q) => `<li><a href="${"../".repeat(depth)}${prefix(lang)}q/${slug(q.id)}/"><b>${inline(view(q, lang === "es" ? es : null).q)}</b></a></li>`).join("")}</ul></section>`;
@@ -151,9 +154,9 @@ export function homeBlock(content, lang, up = "") {
   const t = T[lang], p = prefix(lang), n = content.questions.length;
   const row = (x) => `<li><a href="${up}${p}t/${x.k}/"><b>${esc(lang === "es" ? x.name_es : x.name)}</b><small>${content.questions.filter((q) => q.cat === x.k).length} ${t.qs}</small></a></li>`;
   const groups = content.groups.map((g) => `<h3>${esc(lang === "es" ? g.name_es : g.name)}</h3><ul class="results">${content.topics.filter((x) => x.g === g.k).map(row).join("")}</ul>`).join("");
-  const other = lang === "en" ? `<a href="${up}es/" hreflang="es" lang="es">${T.en.other}</a>` : `<a href="${up}" hreflang="en" lang="en">${T.es.other}</a>`;
+  const other = lang === "en" ? `<a href="${up}es/" hreflang="es" lang="es">${T.en.other}</a>` : `<a href="${up}?lang=en" hreflang="en" lang="en">${T.es.other}</a>`;
   return `<div class="stack" id="boot"><h1>${t.homeH1}</h1><p class="lead">${t.homeLead(n, content.topics.length)}</p>
-<p><a class="btn pri" href="${up}#/practice">${t.start}</a></p>
+<p><a class="btn pri" href="${appLink(lang, up, "#/practice")}">${t.start}</a></p>
 <h2>${t.topics}</h2>${groups}
 <p><a href="${up}${p}t/">${t.browse}</a> · <a href="${up}${p}glossary/">${t.glossary}</a> · ${other}</p></div>`;
 }

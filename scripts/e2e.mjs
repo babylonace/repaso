@@ -204,6 +204,21 @@ await check("first visit follows the browser language, and a saved choice wins",
     await ctx.close();
   }
 });
+await check("from the Spanish home the app opens in Spanish, even with the browser in English, and it sticks", async () => {
+  const ctx = await browser.newContext({ locale: "en-US" });
+  const p = await ctx.newPage();
+  await p.goto(`${URL_}es/`);
+  await p.locator("a.btn.pri").click();
+  await p.waitForFunction(() => document.documentElement.lang === "es" && location.hash === "#/practice");
+  ok(!p.url().includes("lang="), `the address should not keep ?lang, got ${p.url()}`);
+  await p.reload();
+  await p.waitForFunction(() => document.documentElement.lang === "es" && !!document.querySelector("#lang"));
+  await p.goto(`${URL_}es/`);
+  await p.locator("a.tool.lang").click();
+  await p.locator(".opt").first().waitFor();
+  ok((await p.evaluate(() => document.documentElement.lang)) === "en", "the English link on the Spanish home opens English");
+  await ctx.close();
+});
 const levelOnScreen = (p) => p.locator(".qmeta span").first().innerText();
 const walkSession = async (p, onQuestion) => {
   for (let i = 0; i < 80; i++) {

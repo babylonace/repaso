@@ -36,7 +36,7 @@ Tu progreso se queda en tu navegador y funciona sin conexión después de la pri
 - **Primero, preguntas de entrevista.** Las nuevas empiezan por lo que preguntan de verdad. ¿Prefieres ir subiendo? Elige "Desde lo básico" y cada tema se abre nivel a nivel.
 - **Cuatro modos.** Repaso inteligente, al azar, solo mis fallos, y examen con cronómetro (30, 60 o 90 segundos por pregunta).
 - **Temas.** Todas las preguntas de un tema con su estado, para que la noche antes leas solo las que fallaste.
-- **Los dos idiomas.** Un botón. La primera visita sigue el idioma de tu navegador y el código se queda en inglés.
+- **Los dos idiomas.** Un botón. La primera visita sigue el idioma de tu navegador, un enlace desde una página en español abre la app en español y el código se queda en inglés.
 - **Búsqueda** en preguntas, glosario y temas, en los dos idiomas.
 - **Tema claro y oscuro**, instalable y sin conexión después de la primera visita.
 - **Privado por defecto.** Sin analítica, y ninguna petición sale del sitio hasta que inicias sesión.

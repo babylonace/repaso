@@ -35,9 +35,20 @@ function detectLang() {
   }
   return "en";
 }
+/** A link from a static page carries ?lang=es or ?lang=en: the page you came from picks the language. It is remembered, and removed from the address so a reload doesn't repeat it. */
+function langFromLink() {
+  try {
+    const l = new URLSearchParams(location.search).get("lang");
+    if (l !== "es" && l !== "en") return null;
+    history.replaceState(null, "", location.pathname + location.hash);
+    return l;
+  } catch { return null; }
+}
 const saved = lsGet(KEYS.prefs) || {};
+const fromLink = langFromLink();
+if (fromLink) lsSet(KEYS.prefs, { ...saved, lang: fromLink });
 const ui = {
-  lang: saved.lang === "es" || saved.lang === "en" ? saved.lang : detectLang(),
+  lang: fromLink || (saved.lang === "es" || saved.lang === "en" ? saved.lang : detectLang()),
   mode: MODES.includes(saved.mode) ? saved.mode : "smart",
   size: SIZES.includes(saved.size) ? saved.size : 10,
   timer: TIMERS.includes(saved.timer) ? saved.timer : 60,

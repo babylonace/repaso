@@ -36,7 +36,7 @@ Your progress stays in your browser, and it works offline after the first visit.
 - **Interview questions first.** New questions start with what interviewers ask. Want to build up instead? Pick "From the basics" and each topic opens level by level.
 - **Four modes.** Smart review, random, only my misses, and an exam with a timer (30, 60 or 90 seconds per question).
 - **Topics.** Every question of a topic with its status, so the night before you can read just the ones you missed.
-- **Both languages.** One button. The first visit follows your browser language, and code stays in English.
+- **Both languages.** One button. The first visit follows your browser language, a link from a Spanish page opens the app in Spanish, and code stays in English.
 - **Search** over questions, glossary and topics, in both languages.
 - **Light and dark theme**, installable, offline after the first visit.
 - **Private by default.** No analytics, and no request leaves the site until you sign in.
